@@ -2,7 +2,6 @@ import { User } from "../models/userModel.js";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 
-
 //Register Logic
 export const register = async (req, res) => {
   try {
@@ -95,11 +94,15 @@ export const login = async (req, res) => {
         username: user.username,
         fullname: user.fullname,
         profilePhoto: user.profilePhoto,
+        message: "Login successfully",
+        success: true,
       });
   } catch (error) {
     console.log(error);
   }
 };
+
+//LogOut
 
 export const logout = (req, res) => {
   try {
