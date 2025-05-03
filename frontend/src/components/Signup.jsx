@@ -1,24 +1,48 @@
 import { Link, useNavigate } from "react-router-dom";
 import React, { useState } from "react";
+import axios from "axios";
+import toast from "react-hot-toast";
 
 export default function Signup() {
   const [user, setUser] = useState({
-    fullName: "",
+    fullname: "",
     username: "",
     password: "",
     confirmPassword: "",
     gender: "",
   });
-
+  const navigate = useNavigate();
   const handleCheckbox = (gender) => {
     setUser({ ...user, gender });
   };
 
   const onSubmitHandler = async (e) => {
     e.preventDefault();
-    console.log(user);
+    // console.log(user);
+    try {
+      const response = await axios.post(
+        `http://localhost:8080/api/v1/user/register`,
+        user,
+        {
+          headers: {
+            "Content-Type": "application/json",
+          },
+          withCredentials: true,
+        }
+      );
+      if (response.data.success) {
+        navigate("/login");
+        toast.success(response.data.message);
+      }
+
+      console.log("Account created:", response.data);
+    } catch (error) {
+      toast.error(error.response.data.message);
+      // console.log(error);
+    }
+
     setUser({
-      fullName: "",
+      fullname: "",
       username: "",
       password: "",
       confirmPassword: "",
@@ -36,8 +60,8 @@ export default function Signup() {
               <span className="text-base label-text">Full Name</span>
             </label>
             <input
-              value={user.fullName}
-              onChange={(e) => setUser({ ...user, fullName: e.target.value })}
+              value={user.fullname}
+              onChange={(e) => setUser({ ...user, fullname: e.target.value })}
               className="w-full input input-bordered h-10"
               type="text"
               placeholder="Full Name"
@@ -125,7 +149,7 @@ export default function Signup() {
               type="submit"
               className="btn btn-block btn-sm mt-2 border border-slate-700"
             >
-              Singup
+              Signup
             </button>
           </div>
         </form>
