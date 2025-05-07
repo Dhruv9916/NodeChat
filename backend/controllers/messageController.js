@@ -27,9 +27,9 @@ export const sendMessage = async (req, res) => {
       gotConversation.messages.push(newMessage._id);
     }
     await gotConversation.save();
-
+    //SOCKET IO
     return res.status(201).json({
-      message: "Message send successfully",
+      newMessage,
     });
 
     //Socket IO
