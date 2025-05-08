@@ -18,6 +18,7 @@
 //   const dispatch = useDispatch();
 
 //   const navigate = useNavigate();
+
 //   const logoutHandler = async () => {
 //     try {
 //       const res = await axios.get(`http://localhost:8080/api/v1/user/logout`);
@@ -75,7 +76,7 @@
 
 // export default Sidebar;
 
-import React, { useState } from "react";
+import React, { useState, useMemo } from "react";
 import { BiSearchAlt2 } from "react-icons/bi";
 import OtherUsers from "./OtherUsers";
 import axios from "axios";
@@ -93,7 +94,6 @@ const Sidebar = () => {
   const [search, setSearch] = useState("");
   const { otherUsers } = useSelector((store) => store.user);
   const dispatch = useDispatch();
-
   const navigate = useNavigate();
 
   const logoutHandler = async () => {
@@ -110,23 +110,17 @@ const Sidebar = () => {
     }
   };
 
-  const searchSubmitHandler = (e) => {
-    e.preventDefault();
-    const conversationUser = otherUsers?.find((user) =>
+  // Filter users in memory
+  const filteredUsers = useMemo(() => {
+    return otherUsers?.filter((user) =>
       user.fullname.toLowerCase().includes(search.toLowerCase())
     );
-    if (conversationUser) {
-      dispatch(setOtherUsers([conversationUser]));
-    } else {
-      toast.error("User not found!");
-    }
-  };
+  }, [search, otherUsers]);
 
   return (
     <div className="border-r border-slate-500 p-4 flex flex-col">
       <form
-        onSubmit={searchSubmitHandler}
-        action=""
+        onSubmit={(e) => e.preventDefault()}
         className="flex items-center gap-2"
       >
         <input
@@ -141,7 +135,7 @@ const Sidebar = () => {
         </button>
       </form>
       <div className="divider px-3"></div>
-      <OtherUsers />
+      <OtherUsers users={filteredUsers} />
       <div className="mt-2">
         <button onClick={logoutHandler} className="btn btn-sm">
           Logout
